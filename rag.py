@@ -7,20 +7,11 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import (
     RunnableParallel,
     RunnablePassthrough,
-    RunnableLambda,
 )
 from langchain_core.output_parsers import StrOutputParser
 
 from config import GROQ_API_KEY
 
-
-# ----------------------------------------
-# Embedding Model
-# ----------------------------------------
-
-embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-small-en-v1.5"
-)
 
 # ----------------------------------------
 # LLM
@@ -87,15 +78,14 @@ def format_docs(docs):
 # Build RAG Chain
 # ----------------------------------------
 
-# ----------------------------------------
-# Build RAG Chain
-# ----------------------------------------
-
 def create_chain(transcript):
 
-    documents = split_transcript(transcript)
+    # Load embeddings ONLY when a video is loaded
+    embeddings = HuggingFaceEmbeddings(
+        model_name="BAAI/bge-small-en-v1.5"
+    )
 
-    
+    documents = split_transcript(transcript)
 
     vector_store = FAISS.from_documents(
         documents,
@@ -103,51 +93,28 @@ def create_chain(transcript):
     )
 
     retriever = vector_store.as_retriever(
-    search_type="mmr",
-    search_kwargs={
-        "k": 8,
-        "fetch_k": 20,
-        "lambda_mult": 0.5
-    }
-)
-    
-
-    # Debug: Show retrieved documents
-    def debug_docs(docs):
-
-        print("\n" + "=" * 60)
-        print("Retrieved Documents")
-        print("=" * 60)
-
-        for i, doc in enumerate(docs, 1):
-            print(f"\nDocument {i}\n")
-            print(doc.page_content[:500])
-
-        return format_docs(docs)
-
-    # Debug: Show final prompt
-    def debug_prompt(data):
-
-        prompt_value = prompt.invoke(data)
-
-        print("\n" + "=" * 80)
-        print("FINAL PROMPT SENT TO GROQ")
-        print("=" * 80)
-        print(prompt_value)
-        print("=" * 80 + "\n")
-
-        return prompt_value
+        search_type="mmr",
+        search_kwargs={
+            "k": 8,
+            "fetch_k": 20,
+            "lambda_mult": 0.5,
+        },
+    )
 
     chain = (
-    RunnableParallel(
-        {
-            "context": retriever | RunnableLambda(format_docs),
-            "question": RunnablePassthrough(),
+        RunnableParallel(
+            {
+                "context": retriever,
+                "question": RunnablePassthrough(),
+            }
+        )
+        | {
+            "context": lambda x: format_docs(x["context"]),
+            "question": lambda x: x["question"],
         }
+        | prompt
+        | llm
+        | StrOutputParser()
     )
-    | prompt
-    | llm
-    | StrOutputParser()
-)
 
     return chain
