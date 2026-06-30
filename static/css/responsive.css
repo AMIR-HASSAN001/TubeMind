@@ -1,0 +1,21 @@
+@media(max-width:768px){
+
+.hero h1{
+
+    font-size:42px;
+
+}
+
+.search-card{
+
+    flex-direction:column;
+
+}
+
+.search-card button{
+
+    width:100%;
+
+}
+
+}

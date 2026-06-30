@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TubeMind</title>
+
+    <!-- CSS -->
+
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/layout.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+    <link rel="stylesheet" href="/static/css/animations.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+
+    <!-- Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="background"></div> 
+
+<main class="landing">
+
+    <section class="hero">
+
+        <div class="logo">
+            TubeMind
+        </div>
+
+        <h1>
+            Understand Every YouTube Video
+            with AI
+        </h1>
+
+        <p>
+            Powered by Groq, LangChain and Retrieval-Augmented Generation.
+        </p>
+
+    </section>
+
+    <section class="search-card">
+
+        <input
+            id="video-url"
+            type="text"
+            placeholder="Paste YouTube URL..."
+        >
+
+        <button id="analyze-btn">
+
+            Analyze Video
+
+        </button>
+
+    </section>
+
+   <section class="tech-stack">
+
+    <span>Groq</span>
+
+    <span>LangChain</span>
+
+    <span>FAISS</span>
+
+    <span>FastAPI</span>
+
+    <span>HuggingFace</span>
+
+</section>
+
+    <!-- Chat Section -->
+     <section id="video-card" class="video-card hidden">
+
+    <img
+        id="video-thumbnail"
+        src=""
+        alt="Thumbnail"
+    >
+
+</section>
+
+    <section id="chat-section" class="chat-section hidden">
+
+        <div id="chat-box"></div>
+
+        <div class="chat-input">
+
+            <input
+                id="question"
+                type="text"
+                placeholder="Ask anything about this video..."
+            >
+
+            <button id="send-btn">
+
+                Send
+
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/app.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,210 @@
+/* ==========================
+   GOOGLE FONT
+========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ==========================
+   CSS VARIABLES
+========================== */
+
+:root{
+
+    --bg:#030712;
+    --bg-card:rgba(255,255,255,.06);
+
+    --text:#ffffff;
+    --text-secondary:#94A3B8;
+
+    --primary:#6366F1;
+    --secondary:#3B82F6;
+
+    --border:rgba(255,255,255,.08);
+
+    --radius:24px;
+
+}
+
+/* ==========================
+   RESET
+========================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+body{
+
+    font-family:"Inter",sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    overflow-x:hidden;
+
+    min-height:100vh;
+
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#0f172a;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#374151;
+
+    border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#4b5563;
+
+}
+
+/* ==========================
+   BACKGROUND
+========================== */
+
+.background{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    z-index:-10;
+
+    background:
+    radial-gradient(circle at 10% 20%,rgba(99,102,241,.25),transparent 25%),
+    radial-gradient(circle at 90% 80%,rgba(59,130,246,.20),transparent 25%),
+    radial-gradient(circle at 50% 50%,rgba(168,85,247,.12),transparent 35%),
+    #030712;
+
+}
+
+/* Blob 1 */
+
+.background::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:600px;
+
+    height:600px;
+
+    border-radius:50%;
+
+    background:#6366F1;
+
+    filter:blur(180px);
+
+    opacity:.25;
+
+    top:-250px;
+
+    left:-200px;
+
+    animation:blobOne 12s infinite alternate ease-in-out;
+
+}
+
+/* Blob 2 */
+
+.background::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:550px;
+
+    height:550px;
+
+    border-radius:50%;
+
+    background:#3B82F6;
+
+    filter:blur(180px);
+
+    opacity:.18;
+
+    bottom:-220px;
+
+    right:-180px;
+
+    animation:blobTwo 10s infinite alternate ease-in-out;
+
+}
+
+/* ==========================
+   ANIMATION
+========================== */
+
+@keyframes blobOne{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(180px,120px);
+
+    }
+
+}
+
+@keyframes blobTwo{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(-150px,-120px);
+
+    }
+
+}
+.hidden{
+
+    display:none;
+
+}
+.hidden{
+
+    display:none;
+
+}

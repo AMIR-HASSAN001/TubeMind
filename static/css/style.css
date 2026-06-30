@@ -1,0 +1,139 @@
+/* ===================================================
+
+TubeMind UI
+Version 2
+
+=================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:'Inter',sans-serif;
+
+    background:#030712;
+
+    color:white;
+
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    position:relative;
+}
+
+/* ==========================================
+Animated Background
+========================================== */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    width:650px;
+
+    height:650px;
+
+    border-radius:50%;
+
+    background:#4f46e5;
+
+    filter:blur(180px);
+
+    opacity:.22;
+
+    top:-250px;
+
+    left:-250px;
+
+    animation:leftGlow 12s ease-in-out infinite alternate;
+
+    z-index:-2;
+
+}
+
+body::after{
+
+    content:"";
+
+    position:fixed;
+
+    width:650px;
+
+    height:650px;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    filter:blur(180px);
+
+    opacity:.18;
+
+    bottom:-250px;
+
+    right:-250px;
+
+    animation:rightGlow 10s ease-in-out infinite alternate;
+
+    z-index:-2;
+
+}
+
+@keyframes leftGlow{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(150px,120px);
+
+    }
+
+}
+
+@keyframes rightGlow{
+
+    from{
+
+        transform:translate(0,0);
+
+    }
+
+    to{
+
+        transform:translate(-120px,-80px);
+
+    }
+
+}
+
+.container{
+
+    width:92%;
+
+    max-width:1280px;
+
+    margin:auto;
+
+    padding:70px 0;
+
+    position:relative;
+
+}

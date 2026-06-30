@@ -1,0 +1,75 @@
+/* -----------------------------
+   Fade Animation
+------------------------------*/
+
+@keyframes fadeInUp{
+
+    from{
+
+        opacity:0;
+        transform:translateY(40px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateY(0);
+
+    }
+
+}
+
+
+/* -----------------------------
+   Floating Animation
+------------------------------*/
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-10px);
+
+    }
+
+    100%{
+
+        transform:translateY(0px);
+
+    }
+
+}
+
+
+/* -----------------------------
+   Glow Animation
+------------------------------*/
+
+@keyframes glow{
+
+    0%{
+
+        box-shadow:0 0 10px rgba(99,102,241,.2);
+
+    }
+
+    50%{
+
+        box-shadow:0 0 35px rgba(99,102,241,.5);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 10px rgba(99,102,241,.2);
+
+    }
+
+}
