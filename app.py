@@ -88,12 +88,12 @@ async def chat(data: ChatRequest):
     global chain
 
     if chain is None:
-        return {
-            "answer": "Please load a video first."
-        }
+      return {
+        "answer": "Please load a video first."
+    }
 
-    
+    answer = chain.invoke(data.question)
 
     return {
-        "answer": answer
-    }
+     "answer": answer
+}
