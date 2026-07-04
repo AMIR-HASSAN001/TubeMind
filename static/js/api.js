@@ -1,15 +1,15 @@
-async function loadVideo(url){
+async function loadVideo(url) {
 
-    const response = await fetch("/load-video",{
+    const response = await fetch("/load-video", {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json"
         },
 
-        body:JSON.stringify({
-            url:url
+        body: JSON.stringify({
+            url: url
         })
 
     });
@@ -19,18 +19,19 @@ async function loadVideo(url){
 }
 
 
-async function askQuestion(question){
+async function askQuestion(question, sessionId) {
 
-    const response = await fetch("/chat",{
+    const response = await fetch("/chat", {
 
-        method:"POST",
+        method: "POST",
 
-        headers:{
-            "Content-Type":"application/json"
+        headers: {
+            "Content-Type": "application/json"
         },
 
-        body:JSON.stringify({
-            question:question
+        body: JSON.stringify({
+            question: question,
+            session_id: sessionId
         })
 
     });

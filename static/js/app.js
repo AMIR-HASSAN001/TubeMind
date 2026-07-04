@@ -9,6 +9,8 @@ const sendBtn = document.getElementById("send-btn");
 const questionInput = document.getElementById("question");
 const chatBox = document.getElementById("chat-box");
 
+let sessionId = null;
+
 
 // -----------------------------
 // Analyze Video
@@ -26,24 +28,28 @@ analyzeBtn.onclick = async () => {
     analyzeBtn.innerHTML = "Loading...";
     analyzeBtn.disabled = true;
 
-    // Clear previous chat
     chatBox.innerHTML = "";
     questionInput.value = "";
 
     try {
 
         const result = await loadVideo(url);
+
+        if (result.status === "error") {
+            alert(result.message);
+            analyzeBtn.innerHTML = "Analyze Video";
+            analyzeBtn.disabled = false;
+            return;
+        }
+
+        sessionId = result.session_id;
+
         thumbnail.src = result.thumbnail;
 
         videoCard.classList.remove("hidden");
         chatSection.classList.remove("hidden");
-        console.log(result);
 
         alert("Video Loaded Successfully!");
-
-        chatSection.classList.remove("hidden");
-
-        analyzeBtn.innerHTML = "Analyze Video";
 
     } catch (error) {
 
@@ -51,10 +57,9 @@ analyzeBtn.onclick = async () => {
 
         alert("Failed to load video.");
 
-        analyzeBtn.innerHTML = "Analyze Video";
-
     }
 
+    analyzeBtn.innerHTML = "Analyze Video";
     analyzeBtn.disabled = false;
 
 };
@@ -69,6 +74,11 @@ sendBtn.onclick = async () => {
     const question = questionInput.value.trim();
 
     if (question === "") return;
+
+    if (!sessionId) {
+        alert("Please load a video first.");
+        return;
+    }
 
     chatBox.innerHTML += `
         <div class="user-msg">
@@ -88,7 +98,7 @@ sendBtn.onclick = async () => {
 
     try {
 
-        const result = await askQuestion(question);
+        const result = await askQuestion(question, sessionId);
 
         document.getElementById("loading").remove();
 

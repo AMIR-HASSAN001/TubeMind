@@ -1,24 +1,24 @@
+import os
+import re
+import glob
+import tempfile
 from urllib.parse import urlparse, parse_qs
-from youtube_transcript_api import YouTubeTranscriptApi
+
+from yt_dlp import YoutubeDL
 
 
 def extract_video_id(url: str):
-    """
-    Extracts the YouTube video ID from different URL formats.
-    """
-
     parsed_url = urlparse(url)
 
-    # https://youtu.be/VIDEO_ID
     if parsed_url.hostname == "youtu.be":
         return parsed_url.path[1:]
 
-    # https://www.youtube.com/watch?v=VIDEO_ID
     if parsed_url.hostname in (
-        "www.youtube.com",
         "youtube.com",
+        "www.youtube.com",
         "m.youtube.com",
     ):
+
         if parsed_url.path == "/watch":
             return parse_qs(parsed_url.query).get("v", [None])[0]
 
@@ -31,52 +31,54 @@ def extract_video_id(url: str):
     return None
 
 
-from urllib.parse import urlparse, parse_qs
-from youtube_transcript_api import YouTubeTranscriptApi
+def clean_vtt(text):
+    lines = []
 
+    for line in text.splitlines():
 
-def extract_video_id(url: str):
+        line = line.strip()
 
-    parsed_url = urlparse(url)
+        if (
+            not line
+            or line == "WEBVTT"
+            or "-->" in line
+            or line.startswith("Kind:")
+            or line.startswith("Language:")
+        ):
+            continue
 
-    if parsed_url.hostname == "youtu.be":
-        return parsed_url.path[1:]
+        line = re.sub(r"<[^>]+>", "", line)
 
-    if parsed_url.hostname in (
-        "youtube.com",
-        "www.youtube.com",
-        "m.youtube.com",
-    ):
+        if line not in lines:
+            lines.append(line)
 
-        if parsed_url.path == "/watch":
-            return parse_qs(parsed_url.query).get("v", [None])[0]
-
-        if parsed_url.path.startswith("/shorts/"):
-            return parsed_url.path.split("/")[2]
-
-    return None
+    return " ".join(lines)
 
 
 def fetch_transcript(video_url: str):
 
-    video_id = extract_video_id(video_url)
+    with tempfile.TemporaryDirectory() as temp_dir:
 
-    api = YouTubeTranscriptApi()
+        ydl_opts = {
+            "skip_download": True,
+            "writesubtitles": True,
+            "writeautomaticsub": True,
+            "subtitleslangs": ["en"],
+            "subtitlesformat": "vtt",
+            "outtmpl": os.path.join(temp_dir, "%(id)s.%(ext)s"),
+            "quiet": True,
+            "no_warnings": True,
+        }
 
-    transcript_list = api.list(video_id)
+        with YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_url])
 
-    try:
-        transcript = transcript_list.find_transcript(["en"])
+        subtitle_files = glob.glob(os.path.join(temp_dir, "*.vtt"))
 
-    except:
+        if not subtitle_files:
+            raise Exception("No English subtitles found for this video.")
 
-        try:
-            transcript = transcript_list.find_generated_transcript(["en"])
+        with open(subtitle_files[0], "r", encoding="utf-8") as f:
+            transcript = f.read()
 
-        except:
-
-            transcript = next(iter(transcript_list))
-
-    fetched = transcript.fetch()
-
-    return " ".join(chunk.text for chunk in fetched)
+    return clean_vtt(transcript)

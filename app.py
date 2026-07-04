@@ -4,8 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
-from transcript import fetch_transcript
+from transcript import fetch_transcript, extract_video_id
 from rag import create_chain
+import requests
 
 app = FastAPI(title="TubeMind")
 
@@ -17,12 +18,22 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
+@app.get("/test-youtube")
+async def test_youtube():
+    try:
+        r = requests.get("https://www.youtube.com", timeout=10)
+        return {"status": r.status_code}
+    except Exception as e:
+        return {"error": str(e)}
+
 
 # -----------------------------
 # Global Chain
 # -----------------------------
 
-chain = None
+import uuid
+
+chains = {}
 
 
 # -----------------------------
@@ -35,6 +46,7 @@ class VideoRequest(BaseModel):
 
 class ChatRequest(BaseModel):
     question: str
+    session_id: str
 
 
 # -----------------------------
@@ -59,24 +71,30 @@ async def home(request: Request):
 
 @app.post("/load-video")
 async def load_video(data: VideoRequest):
-
     global chain
 
-    transcript = fetch_transcript(data.url)
+    try:
+        transcript = fetch_transcript(data.url)
+        chain = create_chain(transcript)
 
-   
+        session_id = str(uuid.uuid4())
 
-    chain = create_chain(transcript)
+        chains[session_id] = chain
 
-    video_id = data.url.split("v=")[1].split("&")[0]
+        video_id = extract_video_id(data.url)
+        return {
+          "status": "success",
+          "thumbnail": f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg",
+          "session_id": session_id
+        }
 
-    
+    except Exception as e:
+        print("ERROR:", e)
 
-    return {
-    "status": "success",
-    "thumbnail": f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
-}
-
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 # -----------------------------
 # Chat
@@ -85,15 +103,15 @@ async def load_video(data: VideoRequest):
 @app.post("/chat")
 async def chat(data: ChatRequest):
 
-    global chain
+    chain = chains.get(data.session_id)
 
     if chain is None:
-      return {
-        "answer": "Please load a video first."
-    }
+        return {
+            "answer": "Please load a video first."
+        }
 
     answer = chain.invoke(data.question)
 
     return {
-     "answer": answer
-}
+        "answer": answer
+    }
